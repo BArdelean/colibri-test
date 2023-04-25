@@ -17,11 +17,11 @@ class WindTurbineData:
         return pd.concat(data_frames)
 
     def clean_data(self):
-        self.data.dropna(subset=['power_output'], inplace=True)
         self.data['power_output'] = pd.to_numeric(self.data['power_output'], errors='coerce')
-        self.data.dropna(subset=['power_output'], inplace=True)
+        self.data['power_output'] = self.data['power_output'].fillna(method='ffill')  # fill missing values with the last valid value
         self.data.to_csv('output_data/cleaned_data.csv', index=False)
         print("Cleaned_data written to file: output_data/cleaned_data.csv")
+
 
     def calculate_summary_statistics(self):
         summary_stats = self.data.groupby('turbine_id').agg(
